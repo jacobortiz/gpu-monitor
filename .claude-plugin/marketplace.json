@@ -1,0 +1,6 @@
+{
+  "name": "gpu-monitor",
+  "owner": { "name": "Jacob" },
+  "description": "A live NVIDIA GPU panel for Claude Code",
+  "plugins": [{ "name": "gpu-monitor", "source": "./" }]
+}

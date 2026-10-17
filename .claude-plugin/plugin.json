@@ -1,0 +1,27 @@
+{
+  "name": "gpu-monitor",
+  "version": "0.1.0",
+  "description": "Live NVIDIA GPU panel: utilization, VRAM, temperature and power from nvidia-smi, with a one-minute history",
+  "author": { "name": "Jacob" },
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "refreshSeconds": {
+      "type": "number",
+      "title": "Refresh interval (seconds)",
+      "description": "How often nvidia-smi is read while the panel is open or a watched tool runs",
+      "default": 2
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "title": "Open during watched tools",
+      "description": "Open the GPU panel when a tool whose name matches 'Watched tools' starts",
+      "default": true
+    },
+    "watchTools": {
+      "type": "string",
+      "title": "Watched tools",
+      "description": "Case-insensitive text matched against tool names (e.g. comfy matches the comfy-mcp tools); empty watches nothing",
+      "default": "comfy"
+    }
+  }
+}
