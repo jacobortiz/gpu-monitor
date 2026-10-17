@@ -90,8 +90,11 @@ export const register: Register = (on, options) => {
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const { Box, Text } = $.ui.resolve(e)
     const snap = await read($, snapshot)
+    // Desktop panes draw wider glyphs than bodyColumns suggests, so stay well inside it:
+    // each metric is a label/value line with its bar alone on the line below
     const columns = Math.max(24, e.props.bodyColumns ?? 40)
-    const barWidth = Math.max(8, Math.min(30, columns - 22))
+    const barWidth = Math.max(8, Math.min(20, columns - 6))
+    const sparkWidth = Math.max(10, Math.min(24, columns - 6))
 
     if (snap.error !== null) {
       return (
@@ -115,30 +118,39 @@ export const register: Register = (on, options) => {
                 {snap.gpus.length > 1 ? `${gpu.index}: ` : ''}
                 {shortName(gpu.name)}
               </Text>
-              <Text mono>
-                {'GPU   '}
-                <Text color={loadColor(gpu.utilPercent)}>{bar((gpu.utilPercent ?? 0) / 100, barWidth)}</Text>
-                <Text tabular>{` ${String(gpu.utilPercent ?? '?').padStart(3)}%`}</Text>
-              </Text>
-              <Text mono>
-                {'VRAM  '}
-                <Text color={loadColor(memPercent)}>{bar(memFraction, barWidth)}</Text>
-                <Text tabular>{` ${gib(gpu.memUsedMiB)} / ${gib(gpu.memTotalMiB)} GB`}</Text>
-              </Text>
-              <Text tabular dimColor>
-                {gpu.tempC !== null ? `${gpu.tempC}°C` : 'temp ?'}
-                {gpu.powerW !== null
-                  ? `   ${Math.round(gpu.powerW)}${gpu.powerLimitW !== null ? ` / ${Math.round(gpu.powerLimitW)}` : ''} W`
-                  : ''}
-              </Text>
+              <Box flexDirection="row" justifyContent="space-between" marginTop={1}>
+                <Text>GPU</Text>
+                <Text tabular>{gpu.utilPercent ?? '?'}%</Text>
+              </Box>
               <Text mono color={loadColor(gpu.utilPercent)}>
-                {sparkline(snap.history[i] ?? [], Math.max(10, columns - 2))}
+                {bar((gpu.utilPercent ?? 0) / 100, barWidth)}
+              </Text>
+              <Box flexDirection="row" justifyContent="space-between" marginTop={1}>
+                <Text>VRAM</Text>
+                <Text tabular>
+                  {gib(gpu.memUsedMiB)} / {gib(gpu.memTotalMiB)} GB
+                </Text>
+              </Box>
+              <Text mono color={loadColor(memPercent)}>
+                {bar(memFraction, barWidth)}
+              </Text>
+              <Box marginTop={1}>
+                <Text tabular dimColor>
+                  {gpu.tempC !== null ? `${gpu.tempC}°C` : 'temp ?'}
+                  {gpu.powerW !== null
+                    ? ` · ${Math.round(gpu.powerW)}${gpu.powerLimitW !== null ? ` / ${Math.round(gpu.powerLimitW)}` : ''} W`
+                    : ''}
+                </Text>
+              </Box>
+              <Text mono color={loadColor(gpu.utilPercent)}>
+                {sparkline(snap.history[i] ?? [], sparkWidth)}
               </Text>
             </Box>
           )
         })}
         <Text dimColor size="caption">
-          Last {Math.round((refreshMs * Math.max(1, snap.history[0]?.length ?? 0)) / 1000)}s · every {refreshMs / 1000}s
+          Last {Math.round((refreshMs * Math.max(1, Math.min(sparkWidth, snap.history[0]?.length ?? 0))) / 1000)}s · every{' '}
+          {refreshMs / 1000}s
         </Text>
       </Box>
     )

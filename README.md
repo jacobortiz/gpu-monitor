@@ -1,15 +1,10 @@
 # gpu-monitor
 
-A live NVIDIA GPU panel for Claude Code. It shows utilization, VRAM, temperature and power draw, with a one-minute utilization history, so you can watch the GPU while Claude runs local AI work such as image generation with ComfyUI.
+A live NVIDIA GPU panel for Claude Code. It shows utilization, VRAM, temperature and power draw, with a short utilization history, so you can watch the GPU while Claude runs local AI work such as image generation with ComfyUI.
 
-```
-RTX 5080
-GPU   ███████████████████░  97%
-VRAM  █████████████████░░░  14.2 / 15.9 GB
-71°C   331 / 360 W
-▁▁▂▅▇████████████▇▇██████▆▂▁
-Last 60s · every 2s
-```
+![The GPU panel in the Claude desktop app on an RTX 5080: idle with nothing loaded, idle with an image model loaded, and generating a 2K image](docs/screenshot.png)
+
+*An RTX 5080 in the Claude desktop app: idle with nothing loaded (2.1 GB is Windows and open apps), idle with an image model kept in VRAM, and at 100% while ComfyUI generates a 2K image.*
 
 ## Features
 
